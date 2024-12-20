@@ -28,7 +28,7 @@ function OnStart() {
     topBar2.SetBackColor(colorPattern);
     topBar2.SetSize(1, 0.07);
 
-    let btnSelectFile = app.CreateButton("\ud83d\udcc2 Importar", 0.3, 0.05, "Custom");
+    let btnSelectFile = app.CreateButton("[fa-folder-open]", 0.2, 0.05, "FontAwesome");
     btnSelectFile.SetBackColor("#444466");
     btnSelectFile.SetTextColor("#FFFFFF");
     btnSelectFile.SetOnTouch(() => {
