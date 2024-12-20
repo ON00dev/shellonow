@@ -10,31 +10,64 @@ function OnStart() {
 
     // Criar uma barra superior estilizada para o Título do app
     let topBar1 = app.CreateLayout("linear", "Horizontal");
-    topBar1.SetBackColor("#27293D");
+    topBar1.SetBackColor(colorPattern);
     topBar1.SetSize(1, 0.08);
-    
+
     // Criar o texto do título com estilo centralizado
-    let Title = app.CreateText("ShellOnow", 1, 0.1, "Bold");
+    let Title = app.CreateText("", 1, 0.1, "Bold");
     Title.SetTextColor("#FFFFFF");
-    Title.SetTextSize(30); // Fonte grande
-    Title.SetPadding(0, 0.02, 0, 0); // Centraliza verticalmente no layout
+    Title.SetTextSize(55); // Fonte grande
+    Title.SetPadding(0, 0, 0, 0); // Centraliza verticalmente no layout
     topBar1.AddChild(Title);
-    
+
     // Adicionar a barra superior ao layout principal
     layout.AddChild(topBar1);
 
-    // Criar uma barra superior estilizada para o botão de importação
+    // Criar uma barra superior estilizada para botões
     let topBar2 = app.CreateLayout("linear", "Horizontal");
     topBar2.SetBackColor(colorPattern);
     topBar2.SetSize(1, 0.07);
 
-    let btnSelectFile = app.CreateButton("[fa-folder-open]", 0.2, 0.05, "FontAwesome");
+    // Botao importar script
+    let btnSelectFile = app.CreateButton("[fa-upload]", 0.2, 0.05, "FontAwesome");
     btnSelectFile.SetBackColor("#444466");
     btnSelectFile.SetTextColor("#FFFFFF");
     btnSelectFile.SetOnTouch(() => {
         selectShellScript();
     });
     topBar2.AddChild(btnSelectFile);
+
+    // Botao Limpar terminal
+    let btnClean = app.CreateButton("[fa-eraser]", 0.2, 0.05, "FontAwesome");
+    btnClean.SetBackColor("#444466");
+    btnClean.SetTextColor("#FFFFFF");
+    btnClean.SetOnTouch(() => {
+        CleanTerminal(); // Chama a função para limpar o terminal
+    });
+    topBar2.AddChild(btnClean);
+
+    layout.AddChild(topBar2);
+
+    // Botao Editor Shell
+    let btnEditor = app.CreateButton("[fa-pencil]", 0.2, 0.05, "FontAwesome");
+    btnEditor.SetBackColor("#444466");
+    btnEditor.SetTextColor("#FFFFFF");
+    btnEditor.SetOnTouch(() => {
+        ShellEdit(); // Chama a função para abrir o editor
+    });
+    topBar2.AddChild(btnEditor);
+
+    layout.AddChild(topBar2);
+
+    // Botao Github
+    let btnGithub = app.CreateButton("[fa-github]", 0.2, 0.05, "FontAwesome");
+    btnGithub.SetBackColor("#444466");
+    btnGithub.SetTextColor("#FFFFFF");
+    btnGithub.SetOnTouch(() => {
+        Github(); // Chama a função para acessar o GitHub
+    });
+    topBar2.AddChild(btnGithub);
+
     layout.AddChild(topBar2);
 
     // Campo de entrada para comandos Shell
@@ -46,7 +79,7 @@ function OnStart() {
     layout.AddChild(inputCommand);
 
     // Botão para executar o comando
-    let btnExecute = app.CreateButton("\u25b6\ufe0f Executar Comando", 0.4, 0.06, "Custom");
+    let btnExecute = app.CreateButton("[fa-terminal]", 0.4, 0.06, "FontAwesome");
     btnExecute.SetBackColor("#444466");
     btnExecute.SetTextColor("#FFFFFF");
     btnExecute.SetOnTouch(() => {
@@ -76,7 +109,7 @@ function OnStart() {
     layout.AddChild(fileContent);
 
     // Botão para executar o arquivo .sh
-    let btnRunFile = app.CreateButton("\u25b6\ufe0f Executar Arquivo shell", 0.4, 0.06, "Custom");
+    let btnRunFile = app.CreateButton("[fa-fighter-jet]", 0.4, 0.06, "FontAwesome");
     btnRunFile.SetBackColor("#444466");
     btnRunFile.SetTextColor("#FFFFFF");
     btnRunFile.SetOnTouch(() => {
@@ -88,6 +121,24 @@ function OnStart() {
         }
     });
     layout.AddChild(btnRunFile);
+
+    // Adicionar rodapé com versão do app
+    let footer = app.CreateText("", 0.9, 0.03, "Center");
+    footer.SetBackColor(colorPattern);
+    footer.SetTextColor("#888888");
+    footer.SetTextSize(12);
+
+    // Ler e exibir versão do arquivo JSON
+    try {
+        let jsonData = app.ReadFile("shellonow.json");
+        let appData = JSON.parse(jsonData);
+        Title.SetText(appData.appName);
+        footer.SetText(`v${appData.version}`);
+    } catch (e) {
+        footer.SetText("Erro ao carregar versão do aplicativo.");
+    }
+
+    layout.AddChild(footer);
 
     // Adicionar layout à tela
     app.AddLayout(layout);
@@ -107,6 +158,23 @@ function OnStart() {
         } catch (e) {
             output.SetText("\u274c Erro: " + e.message);
         }
+    }
+
+    // Função para acessar projeto open-source
+    function Github() {
+        app.OpenUrl("https://github.com/ON00dev/shellonow");
+    }
+
+    // Função para baixar Editor Shell Script
+    function ShellEdit() {
+        app.OpenUrl("https://play.google.com/store/apps/details?id=com.qamar.editor.shellscript");
+    }
+
+    // Função para limpar o terminal
+    function CleanTerminal() {
+        output.SetText("");
+        inputCommand.SetText("");
+        app.ShowPopup("\ud83c\udf4a Terminal limpo.", "Short");
     }
 
     // Função para selecionar e carregar arquivo .sh
