@@ -1,4 +1,83 @@
+cfg.Dark
+   //AntiCrack
+   //Version 0.02
+   //Author: Base64s
+   //Detect Jasi Patcher
+var jasi = app.IsAppInstalled("com.android.vendinf");
+//Detect Su
+var supersu = app.FileExists("/system/xbin/su");
+//Detect Lucky Patcher
+var lucky = app.FileExists("/data/local/tmp/lp_utils");
+//Detect Magisk
+var magisk = app.FileExists("/sbin/su" );
+//Detect Virtual Space
+//var virtual
+//Detect Xposed
+var xposed = app.FileExists( "/system/xposed.prop" )
+//Get list of installed apps
+var apps = app.GetActivities();
+
+function Alert()
+{
+   //Alert if Root permission(su) & Hacker softwares detected
+   app.Alert(
+      "Hacker software detected!\nJasi Patcher: "+jasi+"\nLucky Patcher: "+lucky+"\nRoot permission: "+supersu+"\nMagisk: "+magisk+"\nXposed: "+xposed+"\nPlease delete Hacker software!",
+      "AntiCrack");
+   //Wait 3 seconds & close app
+   setInterval(Exit, 3000);
+}
+
+function Exit()
+{
+   //Close app
+   app.Exit();
+}
+
+function VerifyAnticrack(){
+    //Check Root permission(su) &  Hacker softwares
+    for(var i in apps){
+      var a = apps[i];
+      l = a.label;
+      p = a.packageName;
+      c = a.className;
+
+      if(lucky==true){
+         Alert();
+         break;
+      }
+      else if(jasi== true){
+         Alert();
+         break;
+      }
+      else if(supersu == true){
+         Alert();
+         break;
+      }
+      else if(magisk== true){
+         Alert();
+         break;
+      }
+      else if(xposed== true)
+      {
+         Alert();
+         break;
+      }
+      else {
+        app.ShowProgressBar("Procurando Apps Maliciosos...");
+        for( prog = 0; prog < 100; prog++ ){
+            app.UpdateProgressBar( prog );
+        }
+        app.HideProgressBar();
+        app.ShowPopup("Nenhum app malicioso encontrado!", "Short");
+        break;
+      }
+    }
+}
+
 function OnStart() {
+    
+    VerifyAnticrack();
+    
     // Solicitar permissões de leitura e escrita no armazenamento
     app.CheckPermission("WriteExternalStorage");
     app.CheckPermission("ReadExternalStorage");
