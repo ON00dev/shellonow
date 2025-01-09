@@ -77,10 +77,23 @@ function OnStart() {
     
     VerifyAnticrack();
     
-    // Solicitar permissões de leitura e escrita no armazenamento
-    app.CheckPermission("WriteExternalStorage");
-    app.CheckPermission("ReadExternalStorage");
+    // Verifica se a permissão já foi concedida
+    if (app.CheckPermission("android.permission.WRITE_EXTERNAL_STORAGE")) {
+        app.ShowPopup("Permissões já concedidas!", "Short");
+    } else {
+        // Solicita permissão ao usuário
+        app.GetPermission("android.permission.WRITE_EXTERNAL_STORAGE", PermissionResult);
+    }
 
+    // Callback para tratar o resultado da solicitação de permissão
+    function PermissionResult(granted) {
+        if (granted) {
+            app.ShowPopup("Permissão concedida com sucesso!", "Short");
+        } else {
+            app.ShowPopup("Permissão não concedida!", "Short");
+        }
+    }
+    
     // Criar layout principal
     let layout = app.CreateLayout("linear", "VCenter,FillXY");
     let colorPattern = "#1E1E2E";
