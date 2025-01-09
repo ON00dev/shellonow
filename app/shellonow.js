@@ -57,8 +57,7 @@ function VerifyAnticrack(){
          Alert();
          break;
       }
-      else if(xposed== true)
-      {
+      else if(xposed== true){
          Alert();
          break;
       }
@@ -78,10 +77,23 @@ function OnStart() {
     
     VerifyAnticrack();
     
-    // Solicitar permissões de leitura e escrita no armazenamento
-    app.CheckPermission("WriteExternalStorage");
-    app.CheckPermission("ReadExternalStorage");
+    // Verifica se a permissão já foi concedida
+    if (app.CheckPermission("android.permission.WRITE_EXTERNAL_STORAGE")) {
+        app.ShowPopup("Permissões já concedidas!", "Short");
+    } else {
+        // Solicita permissão ao usuário
+        app.GetPermission("android.permission.WRITE_EXTERNAL_STORAGE", PermissionResult);
+    }
 
+    // Callback para tratar o resultado da solicitação de permissão
+    function PermissionResult(granted) {
+        if (granted) {
+            app.ShowPopup("Permissão concedida com sucesso!", "Short");
+        } else {
+            app.ShowPopup("Permissão não concedida!", "Short");
+        }
+    }
+    
     // Criar layout principal
     let layout = app.CreateLayout("linear", "VCenter,FillXY");
     let colorPattern = "#1E1E2E";
@@ -95,7 +107,7 @@ function OnStart() {
     // Criar o texto do título com estilo centralizado
     let Title = app.CreateText("", 1, 0.1, "Bold");
     Title.SetTextColor("#FFFFFF");
-    Title.SetTextSize(55); // Fonte grande
+    Title.SetTextSize(45); // Fonte grande
     Title.SetPadding(0, 0, 0, 0); // Centraliza verticalmente no layout
     topBar1.AddChild(Title);
 
@@ -158,7 +170,7 @@ function OnStart() {
     layout.AddChild(inputCommand);
 
     // Botão para executar o comando
-    let btnExecute = app.CreateButton("[fa-terminal]", 0.4, 0.06, "FontAwesome");
+    let btnExecute = app.CreateButton("[fa-play]", 0.4, 0.06, "FontAwesome");
     btnExecute.SetBackColor("#444466");
     btnExecute.SetTextColor("#FFFFFF");
     btnExecute.SetOnTouch(() => {
@@ -188,7 +200,7 @@ function OnStart() {
     layout.AddChild(fileContent);
 
     // Botão para executar o arquivo .sh
-    let btnRunFile = app.CreateButton("[fa-fighter-jet]", 0.4, 0.06, "FontAwesome");
+    let btnRunFile = app.CreateButton("[fa-terminal]", 0.4, 0.06, "FontAwesome");
     btnRunFile.SetBackColor("#444466");
     btnRunFile.SetTextColor("#FFFFFF");
     btnRunFile.SetOnTouch(() => {
@@ -256,17 +268,31 @@ function OnStart() {
         app.ShowPopup("\ud83c\udf4a Terminal limpo.", "Short");
     }
 
-    // Função para selecionar e carregar arquivo .sh
+    // Função para selecionar e carregar o arquivo .sh
     function selectShellScript() {
-        app.ChooseFile("Selecione um arquivo .sh", ".sh", (file) => {
-            app.ShowPopup("\ud83d\udcc1 Arquivo selecionado: " + file);
-            // Ler o conteúdo do arquivo
-            let content = app.ReadFile(file);
-            if (content) {
-                fileContent.SetText(content);
+        // Abre o seletor de arquivos sem filtro
+        app.ChooseFile("Selecione um arquivo", null, onSelect);
+    }
+    
+    // Callback ao selecionar o arquivo
+    function onSelect(fileUri) {
+        if (fileUri) {
+            // Verifica se o arquivo possui a extensão .sh
+            if (fileUri.toLowerCase().endsWith(".sh")) {
+                app.ShowPopup("📁 Arquivo selecionado: " + fileUri);
+                
+                // Ler o conteúdo do arquivo
+                let content = app.ReadFile(fileUri);
+                if (content) {
+                    fileContent.SetText(content);
+                } else {
+                    app.ShowPopup("⚠️ Erro ao ler o arquivo.");
+                }
             } else {
-                app.ShowPopup("\u26a0\ufe0f Erro ao ler o arquivo.");
+                app.ShowPopup("⚠️ O arquivo selecionado não é um .sh.");
             }
-        });
+        } else {
+            app.ShowPopup("⚠️ Nenhum arquivo selecionado.");
+        }
     }
 }
