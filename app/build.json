@@ -1,0 +1,11 @@
+{
+    "manifest" : 
+    { 
+        "minSdkVersion" : 21,
+        "targetSdkVersion" : 31,
+        "debuggable" : false,
+        "removePermissions" : false,
+        "homeScreen":true,
+        "pathPattern":".*\\.jpg,.*\\.png\\.txt"
+    }
+}

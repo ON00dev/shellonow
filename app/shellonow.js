@@ -1,8 +1,7 @@
 cfg.Dark
-   //AntiCrack
-   //Version 0.02
-   //Author: Base64s
-   //Detect Jasi Patcher
+//AntiCrck , Version 0.02 , Author: Base64s
+
+//Detect Jasi Patcher
 var jasi = app.IsAppInstalled("com.android.vendinf");
 //Detect Su
 var supersu = app.FileExists("/system/xbin/su");
@@ -73,31 +72,29 @@ function VerifyAnticrack(){
     }
 }
 
+function requestStoragePermissions() {
+    var buildnum = app.GetBuildNum();
+    app.Alert(buildnum);
+    
+    app.GetPermission("android.permission.MANAGE_EXTERNAL_STORAGE", function(granted) {
+        if (granted) {
+            alert("Permissão de gerenciamento de armazenamento concedida.");
+        } else {
+            alert("Permissão de gerenciamento negada.");
+        }
+    });
+}
+
 function OnStart() {
     
     VerifyAnticrack();
-    
-    // Verifica se a permissão já foi concedida
-    if (app.CheckPermission("android.permission.WRITE_EXTERNAL_STORAGE")) {
-        app.ShowPopup("Permissões já concedidas!", "Short");
-    } else {
-        // Solicita permissão ao usuário
-        app.GetPermission("android.permission.WRITE_EXTERNAL_STORAGE", PermissionResult);
-    }
-
-    // Callback para tratar o resultado da solicitação de permissão
-    function PermissionResult(granted) {
-        if (granted) {
-            app.ShowPopup("Permissão concedida com sucesso!", "Short");
-        } else {
-            app.ShowPopup("Permissão não concedida!", "Short");
-        }
-    }
+    requestStoragePermissions();
     
     // Criar layout principal
     let layout = app.CreateLayout("linear", "VCenter,FillXY");
     let colorPattern = "#1E1E2E";
     layout.SetBackColor(colorPattern);
+    
 
     // Criar uma barra superior estilizada para o Título do app
     let topBar1 = app.CreateLayout("linear", "Horizontal");
