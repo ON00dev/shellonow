@@ -1,0 +1,4 @@
+<resources>
+    <string name="accessibility_service_description">Serviço necessário para automação de tarefas no Android</string>
+    <string name="accessibility_service_title">Serviço de Automação</string>
+</resources> 
